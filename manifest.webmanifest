@@ -1,0 +1,16 @@
+{
+  "name": "BITÁCORA · Acuña Inmobiliaria / USS",
+  "short_name": "Bitácora",
+  "description": "Registro de jornadas de prácticas pre profesionales para practicantes, supervisores y administración.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#900C21",
+  "theme_color": "#900C21",
+  "lang": "es",
+  "icons": [
+    { "src": "icon.webp", "sizes": "360x360", "type": "image/webp", "purpose": "any" },
+    { "src": "icon.webp", "sizes": "360x360", "type": "image/webp", "purpose": "maskable" }
+  ]
+}
