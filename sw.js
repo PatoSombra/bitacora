@@ -1,6 +1,7 @@
-/* Service Worker — BITÁCORA PWA
-   App shell cache-first; red siempre para Supabase (datos en la nube). */
-const CACHE = 'bitacora-v1';
+/* Service Worker — BITÁCORA PWA (v2)
+   HTML: red primero (recibe actualizaciones al instante).
+   Supabase: siempre red (datos en la nube). */
+const CACHE = 'bitacora-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.webp'];
 
 self.addEventListener('install', e => {
@@ -16,18 +17,30 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const req = e.request;
-  if (req.method !== 'GET') return;                 // POST a Supabase: no tocar
+  if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.hostname.endsWith('supabase.co')) return; // datos: siempre a la red
+  if (url.hostname.endsWith('supabase.co')) return;           // datos: siempre a la red
 
-  // App shell / mismo origen: cache primero, cae a red y guarda copia.
+  // HTML / navegación: RED PRIMERO para recibir la última versión; sin conexión, cae a caché.
+  if (req.mode === 'navigate' || req.destination === 'document') {
+    e.respondWith(
+      fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put('./index.html', copy)).catch(() => {});
+        return res;
+      }).catch(() => caches.match('./index.html').then(h => h || caches.match('./')))
+    );
+    return;
+  }
+
+  // Otros archivos del mismo origen (icono, manifest): caché primero, revalida en segundo plano.
   if (url.origin === self.location.origin) {
     e.respondWith(
       caches.match(req).then(hit => hit || fetch(req).then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
         return res;
-      }).catch(() => caches.match('./index.html')))
+      }))
     );
     return;
   }
