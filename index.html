@@ -345,7 +345,7 @@ function App(){
  <main class="wrap">${er&&html`<p class="warn">${er}</p>`}${ses&&!ok?html`<p class="mu">Cargando tus datos…</p>`:ses&&ses.must&&s?html`<div><h2>Cambia tu contraseña para continuar</h2><p class="mu">Estás usando la contraseña inicial (1234). Elige una nueva.</p><${Pass} onSave=${(a,b)=>rpc('change_pass',{p_tok:TOK,p_old:a,p_new:b}).then(r=>r.error||(setSes({...ses,must:false}),null))}/></div>`:!ses?html`<${Login} go=${setSes}/>`:r==='a'?html`<${Admin} S=${S} up=${up}/>`:r==='s'?(s?html`<${Sup} key=${s.id} S=${S} up=${up} s=${s}/>`:html`<p>No hay supervisores registrados.</p>`):(p?html`<${Prac} key=${p.id} S=${S} up=${up} p=${p}/>`:html`<p>No hay practicantes registrados.</p>`)}</main>${ses&&html`<${Asist} S=${S} sc=${sc}/>`}</div>`}
 ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
 /* ===== PWA: service worker + botón instalar ===== */
-if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));let _rf=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(_rf)return;_rf=true;location.reload()})}
 (function(){let dp=null;const b=document.createElement('button');
  b.textContent='⬇ Instalar app';b.setAttribute('aria-label','Instalar aplicación');
  b.style.cssText='position:fixed;left:14px;bottom:14px;z-index:80;display:none;background:#FF6600;color:#fff;border:0;border-radius:12px;padding:10px 16px;font:600 15px Barlow,system-ui,sans-serif;box-shadow:0 6px 16px #0005;cursor:pointer';
